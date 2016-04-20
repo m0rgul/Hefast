@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include template/head.ejs %>
+    <link href="/css/register.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+            <div class="center-block">
+                <h1>Welcome to FAB</h1>
+
+                <h2 class="form-signin-heading">Register your factory</h2>
+            </div>
+            <hr stype="margin: 20px 0 10px;"/>
+            <form role="form" class="form-signin" action="#" method="post">
+                <div class="form-group">
+                    <label for="factoryName" class="sr-only">Factory Name</label>
+                    <input type="text" id="factoryName" name="factoryName" class="form-control input-lg"
+                           placeholder="Factory Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail" class="sr-only">Email</label>
+                    <input type="email" id="email" name="email" class="form-control input-lg" placeholder="Email"
+                           required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="username" class="sr-only">Username</label>
+                    <input type="text" id="username" name="username" class="form-control input-lg"
+                           placeholder="Username" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword" class="sr-only">Password</label>
+                    <input type="password" id="inputPassword" name="password" class="form-control input-lg"
+                           placeholder="Password" required>
+                </div>
+                <span id="errorMessage" class="nodisplay">There was an error.</span>
+
+                <button type="submit" class="btn btn-lg btn-primary btn-block">Register</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<% include template/jsdefaults.ejs %>
+<script type="text/javascript" src="/js/register.js"></script>
+</body>
+
+</html>

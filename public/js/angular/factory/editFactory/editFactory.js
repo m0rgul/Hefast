@@ -1,0 +1,1 @@
+angular.module('factoryEditPage', ['factoryNav', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'ngFileUpload', 'checklist-model']);

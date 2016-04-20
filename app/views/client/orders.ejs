@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include template/head.ejs %>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/2.1.13/daterangepicker.min.css"
+          rel="stylesheet">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="/css/angucomplete-alt.css">
+
+    <% include template/jsdefaults.ejs %>
+    <script src="/js/angular/factory/nav/nav.js"></script>
+    <script src="/js/angular/factory/orders/orders.js"></script>
+    <script src="/js/utils/dirPagination.js"></script>
+    <script src="/js/utils/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/2.1.13/daterangepicker.min.js"></script>
+    <script src="/js/utils/daterangepicker.js"></script>
+    <script src="/js/utils/datetimepicker.js"></script>
+    <script src="/js/utils/angucomplete.min.js"></script>
+    <script src="/js/utils/ng-file-upload.js"></script>
+    <script src="/js/angular/factory/orders/orders.jQuery.js"></script>
+</head>
+
+<body ng-app="factoryOrdersPage">
+<% include template/nav.ejs %>
+<!-- Order Content -->
+
+<div class="container-fluid" ng-controller="factoryOrdersController" id="factoryOrders" ng-cloak>
+    <h1>Order history</h1>
+
+    <div class="container-fluid filtersContainer">
+        <div class="filters col-md-9">
+            <form ng-submit="applyFilters()" class="form-inline">
+                <select class="form-control" ng-if="availableStatuses.length>1" ng-model="filterBy.status"
+                        ng-options="status.name for status in availableStatuses">
+                    <option value="">-- filter by status --</option>
+                </select>
+
+                <input date-range-picker id="daterange3" name="daterange3" class="form-control date-picker" type="text"
+                       ng-model="filterBy.date" options="opts" required/>
+                <button type="submit" class="btn btn-info">Filter</button>
+            </form>
+        </div>
+        <div class="col-md-3 text-right form-inline">
+            <label>Items per page
+                <select class="form-control" ng-model="itemsPerPage" ng-options="item for item in pageSizes"></select>
+            </label>
+            <button type="button" class="btn btn-success btn-lg" id="newOrder">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Order
+            </button>
+        </div>
+    </div>
+
+    <div id="orderList" class="tableContainer">
+        <table class="table table-hover table-striped">
+            <thead>
+            <tr>
+                <td>
+                    Order
+                </td>
+                <td>
+                    <a href="#" ng-click="sortType = 'orderDetails.orderDate';sortReverse = !sortReverse">
+                        Date
+                    <span ng-show="sortType == 'orderDetails.orderDate' && !sortReverse"
+                          class="fa fa-caret-down"></span>
+                        <span ng-show="sortType == 'orderDetails.orderDate' && sortReverse"
+                              class="fa fa-caret-up"></span>
+                    </a>
+                </td>
+                <td>
+                    <a href="#" ng-click="sortType = 'orderDetails.deadline';sortReverse = !sortReverse">
+                        Deadline
+                        <span ng-show="sortType == 'orderDetails.deadline' && !sortReverse"
+                              class="fa fa-caret-down"></span>
+                        <span ng-show="sortType == 'orderDetails.deadline' && sortReverse"
+                              class="fa fa-caret-up"></span>
+                    </a>
+                </td>
+                <td>
+                    File
+                </td>
+                <td>
+                    Print Method
+                </td>
+                <td>
+                    <a href="#" ng-click="sortType = 'status';sortReverse = !sortReverse">
+                        Status
+                        <span ng-show="sortType == 'status' && !sortReverse" class="fa fa-caret-down"></span>
+                        <span ng-show="sortType == 'status' && sortReverse" class="fa fa-caret-up"></span>
+                    </a>
+                </td>
+                <td>Details</td>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr class="orderRow"
+                dir-paginate="order in orderList | orderBy:sortType:sortReverse | itemsPerPage: itemsPerPage"
+                current-page="currentPage">
+                <td>{{order.id}}</td>
+                <td>{{order.orderDate | datetime}}</td>
+                <td>{{order.deadline | date}}</td>
+                <td><a ng-href="/orders/download/{{order.orderDetails.file}}"><span
+                                class="glyphicon glyphicon-download-alt"></span>
+                        {{order.orderDetails.originalFileName}}</a>
+                </td>
+                <td>{{order.orderDetails.printerType}}</td>
+                <td>{{order.status}}</td>
+                <td><a href="" ng-click="clientOrderDetails(order)">Details</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="highlightPag">
+        <dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)"
+                                 template-url="/js/angular/template/dirPagination.tpl.html">
+
+        </dir-pagination-controls>
+    </div>
+
+    <div class="modal fade" id="newOrderPU" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4><span class="glyphicon glyphicon-plus"></span> New Order</h4>
+            </div>
+            <div class="modal-body" style="padding:40px 50px;">
+                <form role="form" id="newOrderForm" name="newOrderForm">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label for="your3DFile">Your 3D File</label>
+
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-primary btn-file">
+                                        Browse… <input type="file" ngf-select ng-model="your3DFile" name="your3DFile"
+                                                       id="your3DFile"
+                                                       accept=".stl" ngf-max-size="200MB" required
+                                                       ngf-model-invalid="errorFiles">
+                                    </span>
+                                </span>
+                                <input class="form-control" readonly="" type="text" id="fileSelectText">
+                            </div>
+                            <i ng-show="newOrderForm.your3DFile.$error.required">*required</i><br>
+
+                            <div class="alert alert-danger" role="alert"
+                                 ng-show="newOrderForm.your3DFile.$error.maxSize">
+                                <strong>Error!</strong>
+                                <span> File too large {{errorFiles[0].size / (1024*1024)|number:1}}MB: max 200MB.</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="measurementUnits">Measurement units</label>
+                            <select id="measurementUnits" required ng-model="order.measurementUnits"
+                                    class="form-control">
+                                <option>mm</option>
+                                <option>cm</option>
+                                <option>in</option>
+                            </select>
+                            <i ng-show="newOrderForm.measurementUnits.$error.required">*required</i><br>
+                            <small class="text-muted">What units did you use when modeling?</small>
+                            <div class="alert alert-danger" role="alert"
+                                 ng-show="newOrderForm.measurementUnits.$invalid && !newOrderForm.measurementUnits.$pristine">
+                                <strong>Error!</strong>
+                                <span> Measurement units required.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="startDate">Select a deadline for your order.</label>
+                        <datetimepicker min-date="date" hour-step="hourStep"
+                                        minute-step="minuteStep" ng-model="date" show-meridian="showMeridian"
+                                        date-format="dd-MMM-yyyy" date-options="dateOptions"
+                                        date-disabled="disabled(date, mode)"
+                                        readonly-date="false"
+                                        hidden-time="true"
+                                        hidden-date="false"
+                                        show-spinners="false"
+                                        readonly-time="false">
+                        </datetimepicker>
+                    </div>
+                    <div class="form-group">
+                        <label for="printerType">Type of printer</label>
+                        <select ng-model="order.printerType" ng-options="type for type in printerType"
+                                class="form-control">
+                            <option value="">-- choose one --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Type of material</label>
+
+                        <div angucomplete-alt
+                             id="material"
+                             placeholder="Search materials"
+                             pause="100"
+                             selected-object="order.material"
+                             local-data="availableMaterials"
+                             search-fields="name,description"
+                             title-field="name"
+                             description-field="description"
+                             field-required="true"
+                             minlength="1"
+                             input-class="form-control form-control-small"
+                             match-class="highlight"
+                             input-name="material">
+                        </div>
+                        <i>*required</i><br>
+
+                        <div class="alert alert-danger" role="alert"
+                             ng-show="newOrderForm.material.$invalid && !newOrderForm.material.$pristine">
+                            <strong>Error!</strong>
+                            <span> You need to select a material.</span>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="comments">Additional comments</label>
+                    <textarea id="comments" ng-model="order.comments" placeholder="Additional comments"
+                              class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <button type="button" class="btn btn-success btn-block" ng-click="placeNewOrder(your3DFile)"
+                            ng-disabled="newOrderForm.$invalid || isSaving">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Place Order
+                    </button>
+                    <button type="button" class="btn btn-danger btn-block" data-dismiss="modal"
+                            ng-disabled="isSaving">
+                        <span class="glyphicon glyphicon-remove"></span> Cancel
+                    </button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <p>Need some help? <a href="#">Contact us</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="orderDetailsPU" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4><span class="glyphicon glyphicon-info-sign"></span> Order Details</h4>
+            </div>
+            <div class="modal-body" style="padding:40px 50px;">
+                <div id="orderInformation">
+                    <h3>Order information</h3>
+                    <span>Placed on <b>{{order.orderDate | datetime}}</b></span>
+                    <span>Deadline on <b>{{order.deadline | date}}</b></span>
+                    <span>Units used: <b>{{order.orderDetails.units}}</b></span>
+                    <span>Printer type: <b>{{order.orderDetails.printerType}}</b></span>
+                    <span>Material type: <b>{{order.orderDetails.material}}</b></span>
+                    <span>Comments: <b>{{order.orderDetails.comments}}</b></span>
+
+                    <a ng-href="/orders/download/{{order.orderDetails.file}}"><span
+                                class="glyphicon glyphicon-download-alt"></span>
+                        {{order.orderDetails.originalFileName}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<% include template/footer.ejs %>
+
+</body>
+</html>

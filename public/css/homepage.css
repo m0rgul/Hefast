@@ -1,0 +1,83 @@
+#matEditForm,
+#machineEditForm {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 100;
+    display: none;
+}
+
+#matEditForm .overlay,
+#machineEditForm .overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background: black;
+    opacity: 0.85;
+}
+
+#matEditForm .edit,
+#machineEditForm .edit {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    width: 400px;
+    padding: 30px;
+    background: #333333;
+    border-radius: 10px;
+    border: 2px solid #888888;
+}
+
+.edit h3 {
+    margin: 10px 0;
+    padding: 0;
+}
+
+.edit form label {
+    margin: 5px 0 10px;
+}
+
+.edit form button {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.noScroll {
+    overflow: hidden;
+}
+
+div.spinedit {
+    display: inline-block;
+    position: relative;
+}
+
+input[type="text"].spinedit {
+    width: 35px;
+}
+
+div.spinedit .icon-chevron-up,
+div.spinedit .icon-chevron-down {
+    position: relative;
+    cursor: pointer;
+    width: 12px;
+    left: 8px;
+}
+
+div.spinedit .icon-chevron-up {
+    top: -12px;
+}
+
+div.spinedit .icon-chevron-down {
+    top: 3px;
+    left: -4px;
+}
+
+.form-search div.spinedit, .form-inline div.spinedit, .form-horizontal div.spinedit {
+    top: 5px;
+}

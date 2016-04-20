@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible"
+          content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Hefast - FABulous</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/font-awesome.min.css"/>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,600,700' rel='stylesheet'
+          type='text/css'>
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/register.css" rel="stylesheet">
+</head>
+<body id="registerBody" ng-app="registerModule">
+<div class="container-fluid">
+    <div class="row pageHeader">
+        <img src="/img/hefast/FABulous_claim_web.png" alt="Fabulous Logo" class="img-responsive fabLogo">
+        <img src="/img/hefast/hefast.png" alt="Hefast Logo" class="img-responsive hefLogo">
+    </div>
+
+    <div class="row textContent">
+        <div class="col-md-8 textContent">
+            <h3>
+                Never miss a deadline again!
+            </h3>
+
+            <p>
+                &emsp;&emsp;3DP-OPECR (<span class="hef">Hefast</span>) is a cloud-based application which helps 3D
+                printer
+                hubs in better organizing their production activities, estimating and forecasting materials consumption
+                and
+                in improving the communication with their clients.
+            </p>
+
+            <p>
+                &emsp;&emsp;Due to the flexibility of the system, the hubs can be <b>small</b> (one person with a
+                printer at
+                home) or <b>big</b> (a prototyping or rapid manufacturing factory with several machines).
+                We very conservatively estimate the total accessible market to be 20.000 3D printers (growing fast!).
+            </p>
+
+            <p>
+                &emsp;&emsp;While there certainly is competition on the market, we took the best features and added new
+                ones
+                to create a more intuitive and easy to use application which innovates also by an additional layer of
+                <b>Big
+                    Data Analytics</b> and <b>Business Intelligence</b> and the usage of <b><i>FIWARE</i></b>
+                technologies.
+            </p>
+        </div>
+
+        <div class="col-md-3 pull-right">
+            <div class="registerForm">
+                <form name="registerForm" ng-controller="registerCtrl" novalidate>
+                    <h4>Register your factory</h4>
+
+
+                    <div class="form-group"
+                         ng-class="{'has-error' : registerForm.factoryName.$invalid && (registerForm.factoryName.$touched || trySubmit),
+                         'has-success' : registerForm.factoryName.$valid && registerForm.factoryName.$touched}">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-building fa-lg fa-fw"></i></span>
+                            <input type="text" class="form-control" placeholder="Factory Name"
+                                   aria-describedby="sizing-addon1" ng-model="user.factoryName"
+                                   name="factoryName" required tabindex="1">
+                        </div>
+                        <div class="help-block text-center has-error" ng-messages="registerForm.factoryName.$error"
+                             ng-show="registerForm.factoryName.$touched || trySubmit">
+                            <p ng-message="required">The factory name is required.</p>
+                            <p ng-message="unique">There is a factory already registered with that name.</p>
+                        </div>
+                    </div>
+
+                    <% if(typeof (data) != 'undefined' && typeof(data.partial) != 'undefined' && data.partial == true) { %>
+                    <div class="form-group"
+                         ng-class="{'has-error' : registerForm.email.$invalid && (registerForm.email.$touched || trySubmit),
+                         'has-success' : registerForm.email.$valid && registerForm.email.$touched}">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-envelope fa-fw fa-lg"></i></span>
+                            <input type="email" class="form-control" placeholder="Factory Email"
+                                   aria-describedby="sizing-addon1" ng-model="user.email"
+                                   name="email" required tabindex="2" ng-init="user.email='<%- data.user.email %>'" disabled>
+                        </div>
+                        <div class="help-block text-center has-error" ng-messages="registerForm.email.$error"
+                             ng-show="registerForm.email.$touched || trySubmit">
+                            <p ng-message="required">The email is required.</p>
+                            <p ng-message="email">Please enter a valid email address.</p>
+                            <p ng-message="unique">There is a factory already registered with that email.</p>
+                        </div>
+                    </div>
+                    <% } else { %>
+
+                    <div class="form-group"
+                         ng-class="{'has-error' : registerForm.email.$invalid && (registerForm.email.$touched || trySubmit),
+                         'has-success' : registerForm.email.$valid && registerForm.email.$touched}">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-envelope fa-fw fa-lg"></i></span>
+                            <input type="email" class="form-control" placeholder="Factory Email"
+                                   aria-describedby="sizing-addon1" ng-model="user.email"
+                                   name="email" required tabindex="2">
+                        </div>
+                        <div class="help-block text-center has-error" ng-messages="registerForm.email.$error"
+                             ng-show="registerForm.email.$touched || trySubmit">
+                            <p ng-message="required">The email is required.</p>
+                            <p ng-message="email">Please enter a valid email address.</p>
+                            <p ng-message="unique">There is a factory already registered with that email.</p>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group"
+                         ng-class="{'has-error' : registerForm.username.$invalid && (registerForm.username.$touched || trySubmit),
+                         'has-success' : registerForm.username.$valid && registerForm.username.$touched}">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user-md fa-lg fa-fw"></i></span>
+                            <input type="text" class="form-control" placeholder="Username"
+                                   aria-describedby="sizing-addon1" ng-model="user.username"
+                                   name="username" ng-minlength="6" ng-maxlength="15" ng-pattern="usernameRegex"
+                                   required tabindex="3">
+                        </div>
+                        <div class="help-block text-center has-error" ng-messages="registerForm.username.$error"
+                             ng-show="registerForm.username.$touched || trySubmit">
+                            <p ng-message="required">The username is required.</p>
+                            <p ng-message="unique">The username is already taken.</p>
+                            <p ng-message="minlength">The username is too short (min. 6 characters).</p>
+                            <p ng-message="maxlength">The username is too long. (max 15 characters)</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group"
+                         ng-class="{'has-error' : registerForm.password.$invalid && (registerForm.password.$touched || trySubmit),
+                         'has-success' : registerForm.password.$valid && registerForm.password.$touched}">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-unlock fa-fw fa-lg"></i></span>
+                            <input type="password" class="form-control" placeholder="Password"
+                                   aria-describedby="sizing-addon1" ng-model="user.password"
+                                   name="password" id="password" ng-minlength="8" ng-maxlength="20"
+                                   ng-pattern="passRegex" required tabindex="4">
+                        </div>
+                        <div class="help-block text-center has-error" ng-messages="registerForm.password.$error"
+                             ng-show="registerForm.password.$touched || trySubmit">
+                            <p ng-message="required">The password is required.</p>
+                            <p ng-message="minlength">The password is too short (8 characters at least).</p>
+                            <p ng-message="maxlength">The password is too long (20 characters at most).</p>
+                            <p ng-message="pattern">The password must consist of at least 1 lowercase character, 1
+                                uppercase character and 1 digit.</p>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <div id="message">
+                        <p id="loginError"></p>
+                    </div>
+
+                    <button class="btn btn-info center-block" type="submit" ng-click="register()" ng-disabled="isSaving"
+                            tabindex="5">Register
+                    </button>
+
+                    <button onclick="window.location.href='/'" class="btn btn-warning center-block"
+                            ng-disabled="isSaving" tabindex="6">
+                        Cancel
+                    </button>
+
+                </form>
+                <div class="loginFooter">
+
+                    <p class="contactUs">Need assistance?
+                        <a href="mailto:feedback@bluemind-software.ro?subject=Hefast Assistance">
+                            Contact us.
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="/js/libs/angular.js"></script>
+    <script src="/js/libs/angular-messages.min.js"></script>
+
+    <script src="/js/angular/index/register.js"></script>
+</body>
+</html>

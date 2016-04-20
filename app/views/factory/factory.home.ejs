@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include template/head.ejs %>
+
+    <% include template/jsdefaults.ejs %>
+    <script src="/js/angular/factory/nav/nav.js"></script>
+    <script src="/js/angular/factory/mainPage/mainPage.js"></script>
+</head>
+
+<body ng-app="factoryMainPage">
+<% include template/nav.ejs %>
+<div class="container-fluid" ng-controller="factoryMainPageController" ng-cloak>
+    <div class="jumbotron">
+        <h1>Wellcome to {{factoryInfo.factoryName}}</h1>
+
+        <div class="jumboRoundImage">
+            asd
+            <img ng-src="./{{factoryInfo.image | randomSrc}}" class="headerImg">
+        </div>
+
+        <p>{{factoryInfo.description}}</p>
+
+        <a ng-href="/machines/{{machine.id}}" class="btn-lg btn-success" role="button">Place an order</a>
+    </div>
+
+    <div id="machines" ng-if="factoryInfo.machines">
+        <h2>Our printers</h2>
+
+        <div class="row">
+            <div class="col-sm-6 col-md-4 machine" ng-repeat="machine in factoryInfo.machines">
+                <div class="thumbnail">
+                    <img ng-src="{{machine.image | randomSrc}}"
+                         alt="{{machine.name}}">
+
+                    <div class="caption">
+                        <h3>{{machine.name}}</h3>
+
+                        <p>{{machine.description}}</p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="materials" ng-if="factoryInfo.materials">
+        <h2>Our materials</h2>
+
+
+        <div class="media col-md-4 material" ng-repeat="material in factoryInfo.materials">
+            <div class="media-left">
+                <img ng-src="{{material.image | randomSrc}}"
+                     alt="{{material.name}}">
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">{{material.name}}</h4>
+
+                <p>{{material.description}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% include template/footer.ejs %>
+
+
+</body>
+</html>

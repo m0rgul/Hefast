@@ -1,0 +1,148 @@
+.nodisplay {
+    display: none;
+}
+
+.ok {
+    display: block;
+    margin: 5px 0;
+    color: blue;
+}
+
+.error {
+    display: block;
+    margin: 5px 0;
+    color: red;
+}
+
+body#indexBody, body#registerBody {
+    background: #222222;
+    margin: 0;
+}
+
+body#indexBody .container-fluid,
+body#registerBody .container-fluid {
+    margin: 0;
+    padding: 0;
+}
+
+body#indexBody .pageHeader, body#indexBody .textContent,
+body#registerBody .pageHeader, body#registerBody .textContent {
+    margin: 0;
+    padding: 0;
+}
+
+body#indexBody .pageHeader,
+body#registerBody .pageHeader {
+    background: #efefef;
+    border-bottom: 1px solid #444444;
+    text-align: center;
+    padding: 15px 0 35px;
+}
+
+.pageHeader img {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    max-height: 80px;
+}
+
+.pageHeader .hefLogo {
+    max-height: 120px;
+    margin-left: 30px;
+}
+
+.pageHeader .fabLogo {
+    top: 20px;
+}
+
+body#indexBody .textContent,
+body#registerBody .textContent {
+    padding-top: 50px;
+    padding-left: 30px;
+}
+
+.textContent h3 {
+    color: #24b5e5;
+    text-transform: uppercase;
+    text-align: justify;
+    font-size: 60px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.textContent p {
+    color: #ddd;
+    text-align: justify;
+    font-size: 20px;
+}
+
+.loginForm, .registerForm {
+    position: relative;
+    top: -130px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    padding: 30px 10px;
+    background: #e7e7e7;
+    margin-right: 30px;
+    -webkit-box-shadow: 6px 14px 10px -3px rgba(0, 0, 0, 0.65);
+    -moz-box-shadow: 6px 14px 10px -3px rgba(0, 0, 0, 0.65);
+    box-shadow: 6px 14px 10px -3px rgba(0, 0, 0, 0.65);
+}
+
+.loginForm form,
+.registerForm form {
+    width: 80%;
+    margin: 10px auto;
+}
+
+.loginForm form h4,
+.registerForm form h4 {
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 20px;
+}
+
+.loginForm form .input-group,
+.registerForm form .input-group {
+    margin-bottom: 15px;
+}
+
+.loginForm form .input-group-addon,
+.registerForm form .input-group-addon {
+    background: #24b5e5;
+    color: white;
+}
+
+.loginForm form .btn,
+.registerForm form .btn {
+    border-radius: 0;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.loginFooter {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.loginFooter p {
+    text-align: center;
+    color: #222222;
+    font-size: 15px;
+}
+
+p#loginError {
+    position: relative;
+    display: block;
+    height: 25px;
+    text-align: center;
+}
+
+.loginForm p,
+.registerForm p {
+    color: inherit;
+    text-align: inherit;
+    font-size: 1em;
+}

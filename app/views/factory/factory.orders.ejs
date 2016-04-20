@@ -1,0 +1,493 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include template/head.ejs %>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/2.1.13/daterangepicker.min.css"
+          rel="stylesheet">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="/css/angucomplete-alt.css">
+    <link href='/css/fullcalendar.css' rel='stylesheet'/>
+
+    <% include template/jsdefaults.ejs %>
+    <script src="/js/angular/factory/nav/nav.js"></script>
+    <script src="/js/angular/factory/orders/orders.js"></script>
+    <script src="/js/utils/dirPagination.js"></script>
+    <script src="/js/utils/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/2.1.13/daterangepicker.min.js"></script>
+    <script src="/js/utils/daterangepicker.js"></script>
+    <script src="/js/utils/datetimepicker.js"></script>
+    <script src="/js/utils/angucomplete.min.js"></script>
+    <script src="/js/utils/ng-file-upload.js"></script>
+    <script src="/js/angular/factory/orders/orders.jQuery.js"></script>
+    <script src='/js/utils/fullcalendar.js'></script>
+</head>
+
+<body ng-app="factoryOrdersPage">
+<% include template/nav.ejs %>
+<!-- Order Content -->
+
+<div class="container-fluid" ng-controller="factoryOrdersController" id="factoryOrders" ng-cloak>
+    <h1>Orders for your factory</h1>
+
+    <div class="container-fluid filtersContainer">
+        <div class="filters col-md-9">
+            <form ng-submit="applyFilters()" class="form-inline">
+                <select class="form-control" ng-if="factoryClients.length>1" ng-model="filterBy.client"
+                        ng-options="user.username for user in factoryClients">
+                    <option value="">-- filter by client --</option>
+                </select>
+
+                <select class="form-control" ng-if="availableMachines.length>1" ng-model="filterBy.machine"
+                        ng-options="machine.name for machine in availableMachines">
+                    <option value="">-- filter by printer --</option>
+                </select>
+
+                <select class="form-control" ng-if="availableMaterials.length>1" ng-model="filterBy.material"
+                        ng-options="material.name for material in availableMaterials">
+                    <option value="">-- filter by material --</option>
+                </select>
+
+                <select class="form-control" ng-if="availableStatuses.length>1" ng-model="filterBy.status"
+                        ng-options="status.name for status in availableStatuses">
+                    <option value="">-- filter by status --</option>
+                </select>
+
+                <input date-range-picker id="daterange3" name="daterange3" class="form-control date-picker" type="text"
+                       ng-model="filterBy.date" options="opts">
+                <button type="submit" class="btn btn-info">Filter</button>
+            </form>
+        </div>
+        <div class="col-md-3 text-right form-inline">
+            <label>Items per page
+                <select class="form-control" ng-model="itemsPerPage" ng-options="item for item in pageSizes"></select>
+            </label>
+            <button type="button" class="btn btn-success btn-lg" id="newOrder">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Order
+            </button>
+        </div>
+    </div>
+
+    <div id="orderList" class="tableContainer table-responsive">
+        <table class="table table-hover table-striped">
+            <thead>
+
+            <tr>
+                <th class="col-md-1">
+                    <a href="#" ng-click="sortType = 'id';sortReverse = !sortReverse">
+                        Order id.
+                        <span ng-show="sortType == 'id' && !sortReverse" class="fa fa-caret-down"></span>
+                        <span ng-show="sortType == 'id' && sortReverse" class="fa fa-caret-up"></span>
+                    </a>
+                </th>
+                <th class="col-md-1">
+                    <a href="#" ng-click="sortType = 'orderDate';sortReverse = !sortReverse">
+                        Date
+                        <span ng-show="sortType == 'orderDate' && !sortReverse"
+                              class="fa fa-caret-down"></span>
+                        <span ng-show="sortType == 'orderDate' && sortReverse"
+                              class="fa fa-caret-up"></span>
+                    </a>
+                </th>
+                <th class="col-md-1">
+                    <a href="#" ng-click="sortType = 'client';sortReverse = !sortReverse">
+                        Client
+                        <span ng-show="sortType == 'client' && !sortReverse" class="fa fa-caret-down"></span>
+                        <span ng-show="sortType == 'client' && sortReverse" class="fa fa-caret-up"></span>
+                    </a>
+                </th>
+                <th class="col-md-1">
+                    <a href="#" ng-click="sortType = 'deadline';sortReverse = !sortReverse">
+                        Deadline
+                        <span ng-show="sortType == 'deadline' && !sortReverse"
+                              class="fa fa-caret-down"></span>
+                        <span ng-show="sortType == 'deadline' && sortReverse"
+                              class="fa fa-caret-up"></span>
+                    </a>
+                </th>
+                <th class="col-md-1">
+                    <a href="#" ng-click="sortType = 'orderDetails.originalFileName';sortReverse = !sortReverse">
+                        File Name
+                        <span ng-show="sortType == 'orderDetails.originalFileName' && !sortReverse"
+                              class="fa fa-caret-down"></span>
+                        <span ng-show="sortType == 'orderDetails.originalFileName' && sortReverse"
+                              class="fa fa-caret-up"></span>
+                    </a>
+                </th>
+                <th class="col-md-1">
+                    <a href="#" ng-click="sortType = 'startDate';sortReverse = !sortReverse">
+                        Start Date
+                        <span ng-show="sortType == 'startDate' && !sortReverse" class="fa fa-caret-down"></span>
+                        <span ng-show="sortType == 'startDate' && sortReverse" class="fa fa-caret-up"></span>
+                    </a>
+                </th>
+                <th class="col-md-1">
+                    <a href="#" ng-click="sortType = 'endDate';sortReverse = !sortReverse">
+                        End Date
+                        <span ng-show="sortType == 'endDate' && !sortReverse" class="fa fa-caret-down"></span>
+                        <span ng-show="sortType == 'endDate' && sortReverse" class="fa fa-caret-up"></span>
+                    </a>
+                </th>
+                <th class="col-md-1">
+                    <a href="#" ng-click="sortType = 'duration';sortReverse = !sortReverse">
+                        Duration (hours)
+                        <span ng-show="sortType == 'duration' && !sortReverse" class="fa fa-caret-down"></span>
+                        <span ng-show="sortType == 'duration' && sortReverse" class="fa fa-caret-up"></span>
+                    </a>
+                </th>
+                <th class="col-md-1">
+                    <a href="#" ng-click="sortType = 'machine';sortReverse = !sortReverse">
+                        Printer
+                        <span ng-show="sortType == 'machine' && !sortReverse" class="fa fa-caret-down"></span>
+                        <span ng-show="sortType == 'machine' && sortReverse" class="fa fa-caret-up"></span>
+                    </a>
+                </th>
+                <th class="col-md-1">
+                    <a href="#" ng-click="sortType = 'materialName';sortReverse = !sortReverse">
+                        Material
+                        <span ng-show="sortType == 'materialName' && !sortReverse" class="fa fa-caret-down"></span>
+                        <span ng-show="sortType == 'materialName' && sortReverse" class="fa fa-caret-up"></span>
+                    </a>
+                </th>
+                <th class="col-md-1">
+                    <a href="#" ng-click="sortType = 'status';sortReverse = !sortReverse">
+                        Status
+                        <span ng-show="sortType == 'status' && !sortReverse" class="fa fa-caret-down"></span>
+                        <span ng-show="sortType == 'status' && sortReverse" class="fa fa-caret-up"></span>
+                    </a>
+                </th>
+                <th class="col-md-1">
+                    Order Details
+                </th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr class="orderRow"
+                dir-paginate="order in orderList | orderBy:sortType:sortReverse | itemsPerPage: itemsPerPage"
+                current-page="currentPage" ng-click="orderDetails(order)" style="cursor: pointer">
+                <td>{{order.id}}</td>
+                <td>{{order.orderDate | datetime}}</td>
+                <td>{{order.client}}</td>
+                <td>{{order.deadline | date}}</td>
+                <td>{{order.orderDetails.originalFileName}}</td>
+                <td>{{order.startDate | datetime}}</td>
+                <td>{{order.endDate | datetime}}</td>
+                <td>{{order.duration}}</td>
+                <td>{{order.machine}}</td>
+                <td>{{order.materialName}}</td>
+                <td>{{order.status}}</td>
+                <td>
+                    <a ng-click="orderDetails(order)">Details</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="highlightPag">
+
+        <dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)"
+                                 template-url="/js/angular/template/dirPagination.tpl.html">
+
+        </dir-pagination-controls>
+    </div>
+
+
+    <!-- end Order Content -->
+
+    <!-- POPUPS -->
+
+    <div class="modal fade" id="newOrderPU" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4><span class="glyphicon glyphicon-plus"></span> New Order</h4>
+            </div>
+            <div class="modal-body" style="padding:40px 50px;">
+
+                <form role="form" id="newOrderForm" name="newOrderForm" novalidate>
+                    <div class="form-group">
+                        <label for="printerType">Client</label>
+                        <select ng-model="order.client" ng-options="client.username for client in factoryClients"
+                                class="form-control" name="client" required>
+                        </select>
+                        <i ng-show="newOrderForm.client.$error.required">*required</i><br>
+
+                        <div class="alert alert-danger" role="alert"
+                             ng-show="newOrderForm.client.$invalid && !newOrderForm.client.$pristine">
+                            <strong>Error!</strong>
+                            <span> You need to select a client.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label for="your3DFile">Your 3D File</label>
+
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-primary btn-file">
+                                        Browse… <input type="file" ngf-select ng-model="your3DFile" name="your3DFile"
+                                                       id="your3DFile" accept=".stl" ngf-max-size="200MB" required
+                                                       ngf-model-invalid="errorFiles">
+                                    </span>
+                                </span>
+                                <input class="form-control" readonly="" type="text" id="fileSelectText">
+                            </div>
+                            <i ng-show="newOrderForm.your3DFile.$error.required">*required</i><br>
+
+                            <div class="alert alert-danger" role="alert"
+                                 ng-show="newOrderForm.your3DFile.$error.maxSize">
+                                <strong>Error!</strong>
+                                <span> File too large {{errorFiles[0].size / (1024*1024)|number:1}}MB: max 200MB.</span>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="measurementUnits">Measurement units</label>
+                            <select id="measurementUnits" name="measurementUnits" required
+                                    ng-model="order.measurementUnits"
+                                    class="form-control">
+                                <option>mm</option>
+                                <option>cm</option>
+                                <option>in</option>
+                            </select>
+                            <i ng-show="newOrderForm.measurementUnits.$error.required">*required</i><br>
+                            <small class="text-muted">What units did you use when modeling?</small>
+                            <div class="alert alert-danger" role="alert"
+                                 ng-show="newOrderForm.measurementUnits.$invalid && !newOrderForm.measurementUnits.$pristine">
+                                <strong>Error!</strong>
+                                <span> Measurement units required.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="startDate">Select a deadline for your order.</label>
+                        <datetimepicker min-date="date" hour-step="hourStep"
+                                        minute-step="minuteStep" ng-model="date" show-meridian="showMeridian"
+                                        date-format="dd-MMM-yyyy" date-options="dateOptions"
+                                        date-disabled="disabled(date, mode)"
+                                        readonly-date="false"
+                                        hidden-time="true"
+                                        hidden-date="false"
+                                        show-spinners="false"
+                                        readonly-time="false">
+                        </datetimepicker>
+
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="printerType">Type of printer</label>
+                        <select ng-model="order.printerType" ng-options="type for type in printerType"
+                                class="form-control">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Type of material</label>
+
+                        <div angucomplete-alt
+                             id="material"
+                             placeholder="Search materials"
+                             pause="100"
+                             selected-object="order.material"
+                             local-data="availableMaterials"
+                             search-fields="name,description"
+                             title-field="name"
+                             description-field="description"
+                             field-required="true"
+                             minlength="1"
+                             input-class="form-control form-control-small"
+                             match-class="highlight"
+                             input-name="material">
+                        </div>
+                        <i>*required</i><br>
+
+                        <div class="alert alert-danger" role="alert"
+                             ng-show="newOrderForm.material.$invalid && !newOrderForm.material.$pristine">
+                            <strong>Error!</strong>
+                            <span> You need to select a material.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="comments">Additional comments</label>
+                    <textarea id="comments" ng-model="order.comments" placeholder="Additional comments"
+                              class="form-control" rows="3"></textarea>
+                    </div>
+
+
+                    <button type="button" class="btn btn-success btn-block" ng-click="placeNewOrder(your3DFile)"
+                            ng-disabled="newOrderForm.$invalid || isSaving">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Place Order
+                    </button>
+                    <button type="button" class="btn btn-danger btn-block" data-dismiss="modal" ng-disabled="isSaving">
+                        <span class="glyphicon glyphicon-remove"></span> Cancel
+                    </button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <p>Need some help? <a href="#">Contact us</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="processOrderPU" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4><span class="glyphicon glyphicon-pencil"></span> Order Details</h4>
+            </div>
+            <div class="modal-body" style="padding:40px 50px;">
+                <div class="row">
+                    <div class="left col-md-6">
+                        <div id="orderInformation">
+                            <h3>Order information</h3>
+                            <span>Order by: <b>{{order.client}}</b></span>
+                            <span>Placed on <b>{{order.orderDate | datetime}}</b></span>
+                            <span>Deadline on <b>{{order.deadline | date}}</b></span>
+                            <span>File: <b>{{order.orderDetails.file}}</b>, units used: <b>{{order.orderDetails.units}}</b></span>
+                            <span>Printer type: <b>{{order.orderDetails.printerType}}</b></span>
+                            <span>Material type: <b>{{order.orderDetails.material}}</b></span>
+                            <span>Comments: <b>{{order.orderDetails.comments}}</b></span>
+
+                            <a ng-href="/orders/download/{{order.orderDetails.file}}"><span
+                                        class="glyphicon glyphicon-download-alt"></span>
+                                {{order.orderDetails.originalFileName}}</a>
+                        </div>
+                        <hr/>
+                        <form role="form" name="processOrderForm" id="processOrderForm" novalidate>
+
+                            <div class="form-group">
+                                <label>Select printer</label>
+                                <select class="form-control" ng-model="order.machine" name="factoryMachine"
+                                        id="factoryMachine" required>
+                                    <option ng-repeat="machine in availableMachines" value="{{machine.name}}">
+                                        {{machine.name}}
+                                    </option>
+                                </select>
+
+                                <div class="alert alert-danger" role="alert"
+                                     ng-show="processOrderForm.factoryMachine.$invalid && !processOrderForm.factoryMachine.$pristine">
+                                    <strong>Error!</strong>
+                                    <span> You need to select a printer.</span>
+                                </div>
+                                <small class="text-muted">This is the printer which will be used.</small>
+
+                            </div>
+
+                            <div class="form-group">
+                                <label>Type of material</label>
+
+                                <div angucomplete-alt
+                                     id="material1"
+                                     placeholder="Search materials"
+                                     pause="100"
+                                     selected-object="order.material"
+                                     local-data="availableMaterials"
+                                     search-fields="name,description"
+                                     title-field="name"
+                                     description-field="description"
+                                     field-required="true"
+                                     minlength="1"
+                                     input-class="form-control form-control-small"
+                                     match-class="highlight"
+                                     input-name="material1">
+                                </div>
+                                <i>*required</i><br>
+
+                                <div class="alert alert-danger" role="alert"
+                                     ng-show="processOrderForm.material1.$invalid && !processOrderForm.material1.$pristine">
+                                    <strong>Error!</strong>
+                                    <span> You need to select a material.</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="orderDuration">Order duration</label>
+                                <input type="text" ng-model="order.orderDuration" id="orderDuration"
+                                       name="orderDuration"
+                                       required class="form-control" placeholder="Order duration">
+                                <i>*required</i><br>
+                                <small class="text-muted">Example: <b><i>2h 30m</i></b> or <b><i>2.5</i></b> or
+                                    <b><i>2:30</i></b></small>
+                                <div class="alert alert-danger" role="alert"
+                                     ng-show="processOrderForm.orderDuration.$invalid && !processOrderForm.orderDuration.$pristine">
+                                    <strong>Error!</strong>
+                                    <span> Format is not correct and cannot be 0.</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="startDate">Select order start date and time.</label>
+                                <input type="hidden" id="startDate"
+                                       value="{{date | date:'shortTime' }}, {{date | date:'fullDate' }}"/>
+
+                                <div class="row">
+                                    <datetimepicker min-date="minDate" hour-step="hourStep"
+                                                    minute-step="minuteStep" ng-model="date"
+                                                    show-meridian="showMeridian"
+                                                    date-format="dd-MMM-yyyy" date-options="dateOptions"
+                                                    date-disabled="disabled(date, mode)"
+                                                    readonly-date="false"
+                                                    hidden-time="false"
+                                                    hidden-date="false"
+                                                    show-spinners="true"
+                                                    readonly-time="false">
+                                    </datetimepicker>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden" ng-model="dateValid" required name="dateValid">
+
+                                <div class="alert alert-danger" role="alert"
+                                     ng-show="processOrderForm.dateValid.$invalid">
+                                    <strong>Warning!</strong>
+                                    <span> There is another order scheduled during that interval.</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Order Status</label>
+                                <select ng-model="order.orderStatus" class="form-control" name="orderStatus"
+                                        ng-options="status.name disable when status.disabled for status in orderStatuses"
+                                        required>
+                                </select>
+
+                                <div class="alert alert-danger" role="alert"
+                                     ng-show="processOrderForm.orderStatus.$invalid">
+                                    <strong>Error!</strong>
+                                    <span> Please change status.</span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary"
+                                    ng-disabled="processOrderForm.$invalid || isSaving"
+                                    ng-click="submitOrder()">
+                                Submit
+                            </button>
+                        </form>
+                    </div>
+                    <div class="right col-md-6">
+                        <div id='script-warning'>
+                            <code>php/get-events.php</code> must be running.
+                        </div>
+                        <div id='loading'>loading...</div>
+
+                        <div id='calendar'></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <p>Need some help? <a href="#">Contact us</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% include template/footer.ejs %>
+
+</body>
+</html>

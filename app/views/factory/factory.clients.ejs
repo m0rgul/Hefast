@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include template/head.ejs %>
+    <% include template/jsdefaults.ejs %>
+    <script src="./js/angular/factory/nav/nav.js"></script>
+    <script src="./js/angular/factory/clients/clients.js"></script>
+</head>
+
+<body ng-app="factoryClientsPage">
+
+<% include template/nav.ejs %>
+<div class="container-fluid" ng-controller="factoryClientsController" ng-cloak>
+    <h1>Clients of your factory</h1>
+
+    <div class="row text-right">
+        <button type="button" class="btn btn-success btn-lg" id="newClient">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Client
+        </button>
+    </div>
+
+    <div id="orderList" class="tableContainer table-responsive">
+        <table class="table table-hover table-striped">
+            <thead>
+            <tr>
+                <th>
+                    Client id.
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Phone no.
+                </th>
+                <th>
+                    Address
+                </th>
+                <th>
+                    Date joined
+                </th>
+                <!--<th>
+                    Last order
+                </th>
+                <th>
+                    Order history
+                </th>-->
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr ng-repeat="client in factoryClients" ng-click="editClient(client)" class="clientRow">
+                <td>{{client.username}}</td>
+                <td>{{client.email}}</td>
+                <td>{{client.phoneNo}}</td>
+                <td>{{client.address}}</td>
+                <td>{{client.dateJoined | date}}</td>
+                <!--<td>{{client.lastOrder | date}}</td>-->
+                <!--<td>
+                    &lt;!&ndash;<a ng-click="clientDetails(client)">Order history</a>&ndash;&gt;
+                </td>-->
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="modal fade" id="newClientPU" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 ng-if="!newClient.edit"><span class="glyphicon glyphicon-plus"></span> New Client</h4>
+                <h4 ng-if="newClient.edit"><span class="glyphicon glyphicon-pencil"></span> Client Details</h4>
+            </div>
+            <div class="modal-body" style="padding:40px 50px;">
+                <h5 ng-if="!newClient.edit">First create a new account for your client at <a
+                            href="https://account.lab.fiware.org/sign_up/">Fiware Labs</a>.</h5>
+
+                <form role="form" name="clientForm" novalidate>
+                    <div class="form-group">
+                        <label>Client Full Name</label>
+                        <input type="text" ng-model="newClient.fullName" required class="form-control"
+                               placeholder="Client Full Name" name="fullName">
+
+                        <div class="alert alert-danger" role="alert"
+                             ng-show="clientForm.fullName.$invalid && !clientForm.fullName.$pristine">
+                            <strong>Error!</strong>
+                            <span> Please provide client full name.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Client Email Address</label>
+                        <input type="email" ng-model="newClient.email" required class="form-control"
+                               placeholder="Client Email Address" name="email">
+
+                        <div class="alert alert-danger" role="alert"
+                             ng-show="clientForm.email.$invalid && !clientForm.email.$pristine">
+                            <strong>Error!</strong>
+                            <span> Please provide a valid e-mail address.</span>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>Client Phone Number</label>
+                        <input type="text" ng-model="newClient.phoneNo" class="form-control"
+                               placeholder="Client Phone Number">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Client Address</label>
+                        <input type="text" ng-model="newClient.address" class="form-control"
+                               placeholder="Client Address">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Client Username</label>
+                        <input type="text" ng-model="newClient.username" required class="form-control"
+                               placeholder="Client Username" ng-disabled="newClient.edit" name="username">
+
+                        <div class="alert alert-danger" role="alert"
+                             ng-show="clientForm.username.$invalid && !clientForm.username.$pristine">
+                            <strong>Error!</strong>
+                            <span> Please provide a username for the client.</span>
+                        </div>
+                        <p class="help-block">Make sure to use the username as the client's FIWARE Labs account
+                            username.</p>
+                    </div>
+
+                    <button type="button" class="btn btn-success btn-block" ng-click="addClient()"
+                            ng-if="!newClient.edit" ng-disabled="clientForm.$invalid || isSaving">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Add Client
+                    </button>
+
+                    <button type="button" class="btn btn-success btn-block" ng-click="updateClient()"
+                            ng-if="newClient.edit" ng-disabled="clientForm.$invalid || isSaving">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                        Update Client
+                    </button>
+
+                    <button type="button" class="btn btn-danger btn-block" ng-click="deleteClient()"
+                            ng-if="newClient.edit" ng-disabled="isSaving">
+                        <span class="glyphicon glyphicon-remove-sign"></span>
+                        Remove Client
+                    </button>
+
+                    <button type="button" class="btn btn-danger btn-block" data-dismiss="modal" ng-disabled="isSaving">
+                        <span class="glyphicon glyphicon-remove"></span> Cancel
+                    </button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <p>Need some help? <a href="#">Contact us</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% include template/footer.ejs %>
+
+</body>
+</html>

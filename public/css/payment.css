@@ -1,0 +1,123 @@
+.pricesList {
+    text-align: center;
+    vertical-align: middle;
+    margin-top: 120px;
+}
+
+.planContent {
+    background-color: #f3f3f3;
+    border-radius: 5px;
+    box-shadow: 0 0 6px 2px #b0b2ab;
+    text-align: center;
+    margin: 5%;
+    padding: 0;
+}
+
+.paymentPlan:first-child {
+    margin: 0;
+}
+
+.planHeader {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    min-height: 45px;
+    position: relative;
+}
+
+.price-value {
+    background: #1cad8d none repeat scroll 0 0;
+    border: 5px solid #fff;
+    border-radius: 50%;
+    color: #fff;
+    height: 100px;
+    left: 50%;
+    margin-left: -50px;
+    position: absolute;
+    text-align: center;
+    top: -50px;
+    width: 100px;
+}
+
+.price-value p {
+    display: table;
+    height: 100%;
+    margin: 0;
+    vertical-align: middle;
+    width: 100%;
+}
+
+.price-value p span {
+    display: table-cell;
+    font-size: 25px;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+.price-period {
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #1cad8d;
+    border-radius: 50%;
+    height: 35px;
+    margin-right: -50px;
+    position: absolute;
+    right: 50%;
+    text-align: center;
+    top: -50px;
+    width: 35px;
+}
+
+.price-period p {
+    color: #1cad8d;
+    display: table;
+    height: 100%;
+    margin: 0;
+    vertical-align: middle;
+    width: 100%;
+}
+
+.price-period p span {
+    display: table-cell;
+    font-size: 14px;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+.planBody h3 {
+    background: #18b1cc;
+    color: #fff;
+    line-height: 1.2;
+    margin: 10px 0;
+    text-align: center;
+    font-size: 30px;
+    padding: 10px 0;
+    font-weight: bold;
+}
+
+.planBody ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.planBody ul li {
+    clear: both;
+    content: "";
+    display: table;
+    padding: 5px 15px;
+}
+
+.planFooter {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    text-align: center;
+    background: #b9eef7;
+}
+
+.paymentResult {
+    position: relative;
+    display: block;
+    padding: 12px 0;
+    top: 55px;
+}

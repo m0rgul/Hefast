@@ -1,0 +1,32 @@
+<div class="container">
+    <div class="row selectedPayment">
+        You have selected {{selectedOption}}
+    </div>
+
+    <div class="row paymentOptions">
+        <form>
+            <label>
+                <input type="radio" ng-model="paymentType" value="1"/>
+                Single payment
+            </label>
+            <label>
+                <input type="radio" ng-model="paymentType" value="2"/>
+                Monthly Subscription
+            </label>
+            <label>
+                <input type="radio" ng-model="paymentType" value="3"/>
+                3 Month Subscription
+            </label>
+            <label>
+                <input type="radio" ng-model="paymentType" value="4"/>
+                6 Month Subscription
+            </label>
+            <label>
+                <input type="radio" ng-model="paymentType" value="5"/>
+                12 Month Subscription
+            </label>
+        </form>
+        <a class="btn btn-success" ng-click="nextStep()">Continue</a>
+        <a class="btn btn-danger" href="#/">Back</a>
+    </div>
+</div>

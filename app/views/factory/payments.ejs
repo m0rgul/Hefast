@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include template/head.ejs %>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="/css/payment.css">
+</head>
+
+<body ng-app="factoryPayments">
+<% include template/nav.ejs %>
+
+<% if(typeof error != 'undefined' && error.length > 0){ %>
+<p class="paymentResult alert alert-danger"><b>Error: </b><%= error %></p>
+<% } else if (typeof success != 'undefined' && success.length > 0){ %>
+<p class="paymentResult alert alert-success text-center">Payment successful.</p>
+<% } else if(typeof cancel != 'undefined' && cancel.length > 0){ %>
+<p class="paymentResult alert alert-warning text-center">Payment canceled.</p>
+<% } %>
+
+<div class="container-fluid" ng-cloak ng-controller="plansCtrl">
+    <div class="container">
+        <div class="row pricesList">
+
+            <div class="col-md-4 col-sm-6 col-xs-12 paymentPlan">
+                <div class="planContent">
+                    <div class="planHeader">
+                        <div class="price-value">
+                            <p>
+                                <span>9.99&euro;</span>
+                            </p>
+                        </div>
+                        <div class="price-period">
+                            <p>
+                                <span>mo</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="planBody">
+                        <h3>Software</h3>
+                        <ul class="planFeatures">
+                            <li>test</li>
+                            <li>test</li>
+                            <li>test</li>
+                            <li>test</li>
+                            <li>Monthly Subscription</li>
+                        </ul>
+                    </div>
+                    <div class="planFooter">
+                        <button class="btn btn-info" ng-click="selectPlan(0)">Select Plan</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-6 col-xs-12 paymentPlan">
+                <div class="planContent">
+                    <div class="planHeader">
+                        <div class="price-value">
+                            <p>
+                                <span>14.99&euro;</span>
+                            </p>
+                        </div>
+                        <div class="price-period">
+                            <p>
+                                <span>mo</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="planBody">
+                        <h3>Reports</h3>
+                        <ul class="planFeatures">
+                            <li>test</li>
+                            <li>test</li>
+                            <li>test</li>
+                            <li>test</li>
+                            <li>Monthly Subscription</li>
+                        </ul>
+                    </div>
+                    <div class="planFooter">
+                        <button class="btn btn-info" ng-click="selectPlan(1)">Select Plan</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-6 col-xs-12 paymentPlan">
+                <div class="planContent">
+                    <div class="planHeader">
+                        <div class="price-value">
+                            <p>
+                                <span>89.99&euro;</span>
+                            </p>
+                        </div>
+                        <div class="price-period">
+                            <p>
+                                <span>mo</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="planBody">
+                        <h3>Software + Reports</h3>
+                        <ul class="planFeatures">
+                            <li>test</li>
+                            <li>test</li>
+                            <li>test</li>
+                            <li>test</li>
+                            <li>Monthly Subscription</li>
+                        </ul>
+                    </div>
+                    <div class="planFooter">
+                        <button class="btn btn-info" ng-click="selectPlan(2)">Select Plan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<% include template/footer.ejs %>
+
+<!-- JS includes -->
+<% include template/jsdefaults.ejs %>
+
+<script src="/js/angular/factory/nav/nav.js"></script>
+<script src="/js/angular/factory/payments/payments.js"></script>
+
+</body>
+</html>

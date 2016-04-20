@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include template/head.ejs %>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/2.1.13/daterangepicker.min.css"
+          rel="stylesheet">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="/css/angucomplete-alt.css">
+
+    <% include template/jsdefaults.ejs %>
+
+    <script src="/js/angular/factory/nav/nav.js"></script>
+    <script src="/js/angular/factory/editFactory/editFactory.js"></script>
+    <script src="/js/angular/factory/editFactory/editFactory.client.controllers.js"></script>
+    <script src="/js/angular/factory/editFactory/editFactory.client.services.js"></script>
+    <script src="/js/angular/factory/editFactory/editFactory.client.filters.js"></script>
+    <script src="/js/utils/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/2.1.13/daterangepicker.min.js"></script>
+    <script src="/js/utils/daterangepicker.js"></script>
+    <script src="/js/utils/datetimepicker.js"></script>
+    <script src="/js/utils/ng-file-upload.js"></script>
+    <script src="/js/utils/checklist.js"></script>
+
+
+</head>
+
+<body ng-app="factoryEditPage">
+<% include template/nav.ejs %>
+
+<div class="container-fluid" ng-controller="factoryEditController" id="factoryEdit" ng-cloak>
+
+    <div class="alert alert-info" role="alert">
+        <strong>Info:</strong> Part of this content will be used to generate your <a href="/factory/{{factoryInfo.id}}">public
+            page</a>.
+    </div>
+
+    <div class="alert alert-warning alert-dismissible" role="alert" ng-show="noInfo">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+        <strong>Info:</strong> You have to fill in your factory information before proceeding.
+    </div>
+
+
+    <div class="jumbotron">
+        <h1>{{factoryInfo.factoryName}}</h1>
+
+        <div class="jumboRoundImage">
+            <img ng-src="{{factoryInfo.logo | randomSrc}}" class="headerImg">
+        </div>
+
+        <p>{{factoryInfo.description}}</p>
+
+        <button type="button" class="btn btn-info btn-sm pull-right" ng-click="editFactoryInfo()">Edit information
+        </button>
+    </div>
+
+    <!-- factory edit pop-up -->
+
+    <div class="modal fade" id="editFactoryPU" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4><span class="glyphicon glyphicon-info"></span> Your factory info</h4>
+            </div>
+            <div class="modal-body" style="padding:40px 50px;">
+                <form role="form" id="factoryDetailForm" name="factoryDetailForm" novalidate>
+                    <h2>Factory Details</h2>
+
+                    <div class="form-group">
+                        <label for="factoryName">Factory Name</label>
+                        <input type="text" class="form-control" id="factoryName" ng-model="newFactoryInfo.factoryName"
+                               name="factoryName"
+                               required>
+                        <small class="text-muted">This is the name of your business.</small>
+
+                        <div class="alert alert-danger" role="alert"
+                             ng-show="factoryDetailForm.factoryName.$invalid && !factoryDetailForm.factoryName.$pristine">
+                            <strong>Error!</strong>
+                            <span> Factory name is required.</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="factoryEmail">Factory Email</label>
+
+                        <input type="email" class="form-control" id="factoryEmail" name="factoryEmail"
+                               ng-model="newFactoryInfo.factoryEmail" required>
+                        <small class="text-muted">This is the email used for communication.</small>
+
+                        <div class="alert alert-danger" role="alert"
+                             ng-show="factoryDetailForm.factoryEmail.$invalid&& !factoryDetailForm.factoryEmail.$pristine">
+                            <strong>Error!</strong>
+                            <span> Factory email is required.</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="factoryDescription">Factory Descriptrion</label>
+                        <textarea ng-model="newFactoryInfo.description" id="factoryDescription" class="form-control"
+                                  rows="5"></textarea>
+                        <small class="text-muted">The description of your business.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="logoFile">Upload your company logo.</label>
+
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-primary btn-file">
+                                    Browse
+                                    <input type="file" ngf-select ng-model="logoFile" id="logoFile" name="logoFile"
+                                           accept=".jpg, .png" ngf-max-size="1MB" ngf-model-invalid="errorFiles">
+                                </span>
+                            </span>
+                            <input class="form-control" readonly="" type="text" id="logoFileSelectText">
+                        </div>
+                        <div class="alert alert-danger" role="alert"
+                             ng-show="factoryDetailForm.logoFile.$error.maxSize">
+                            <strong>Error!</strong>
+                            <span> File too large {{errorFiles[0].size / (1024*1024)|number:1}}MB: max 1MB.</span>
+                        </div>
+                    </div>
+
+
+                    <button type="button" class="btn btn-success btn-block" ng-click="updateFactoryDetails(logoFile)"
+                            ng-disabled="factoryDetailForm.$invalid || isSaving">
+                        <span class="glyphicon glyphicon-floppy-disk"></span>
+                        Save Changes
+                    </button>
+
+                    <button type="button" class="btn btn-danger btn-block" data-dismiss="modal" ng-disabled="isSaving">
+                        <span class="glyphicon glyphicon-remove"></span> Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- materials -->
+    <a name="materials"></a>
+
+    <h2>Materials</h2>
+
+    <div id="materialsList" class="tableContainer">
+        <div class="row text-right">
+            <button type="button" class="btn btn-success btn-lg" id="newOrder" ng-click="newMaterial()"
+                    ng-disabled="disableMat">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Material
+            </button>
+
+            <div class="alert alert-warning alert" role="alert" ng-show="disableMat">
+                Edit your factory details first.
+            </div>
+        </div>
+
+
+        <table class="table table-hover table-striped materialsTable">
+            <thead>
+            <tr>
+                <th class="col-md-2">Material Name</th>
+                <th class="col-md-8">Description</th>
+                <th class="col-md-1">Stock</th>
+                <th class="col-md-1">Image</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr class="handOver" ng-repeat="material in factoryInfo.materials"
+                ng-click="materialDetails(material, $index)">
+                <td>{{material.name}}</td>
+                <td>{{material.description}}</td>
+                <td>{{material.stock}}</td>
+                <td><img ng-if="material.image"
+                         ng-src="{{material.image | randomSrc}}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- material modal -->
+
+    <div class="modal fade" id="materialDetailPU" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4><span class="glyphicon glyphicon-info"></span> Material Info</h4>
+            </div>
+            <div class="modal-body" style="padding:40px 50px;">
+                <form role="form" id="materialDetail" name="materialDetail" novalidate>
+                    <h2 ng-if="!matEdit.new">{{matEdit.name}}</h2>
+
+                    <h2 ng-if="matEdit.new">New Material</h2>
+
+                    <div class="form-group">
+                        <label for="materialName">Material Name</label>
+
+                        <div class="col-sm-10" ng-if="!matEdit.new">
+                            <p class="form-control-static">{{matEdit.name}}</p>
+                        </div>
+
+
+                        <input type="text" class="form-control" id="materialName" ng-model="matEdit.name"
+                               name="materialName" required ng-if="matEdit.new">
+
+                        <div class="alert alert-danger" role="alert"
+                             ng-show="materialDetail.materialName.$invalid && !materialDetail.materialName.$pristine">
+                            <strong>Error!</strong>
+                            <span> Material name is required.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="materialDescription">Material Description</label>
+
+                        <textarea ng-model="matEdit.description" id="materialDescription" class="form-control"
+                                  rows="3"></textarea>
+                        <small class="text-muted">This is the description of the material. <i>*optional, but we
+                                recommend you add it, it helps with material search</i></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="factoryDescription">Material Stock</label>
+                        <input type="number" step="0.01" min="0" class="form-control" name="matStock"
+                               ng-model="matEdit.stock" required>
+                        <small class="text-muted">How much of the material you have (in kilograms)</small>
+                        <div class="alert alert-danger" role="alert"
+                             ng-show="materialDetail.matStock.$invalid && !materialDetail.matStock.$pristine">
+                            <strong>Error!</strong>
+                            <span> Material stock is required.</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="matImage">Upload an image of the material.</label>
+
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-primary btn-file">
+                                    Browse
+                                    <input type="file" ngf-select ng-model="matImage" id="matImage" name="matImage"
+                                           accept=".jpg, .png" ngf-max-size="1MB" ngf-model-invalid="errorFiles">
+                                </span>
+                            </span>
+                            <input class="form-control" readonly="" type="text" id="matImageSelect">
+                        </div>
+                        <div class="alert alert-danger" role="alert"
+                             ng-show="materialDetail.matImage.$error.maxSize">
+                            <strong>Error!</strong>
+                            <span> File too large {{errorFiles[0].size / (1024*1024)|number:1}}MB: max 1MB.</span>
+                        </div>
+                    </div>
+
+
+                    <button type="button" class="btn btn-success btn-block" ng-click="submitMaterial(matImage)"
+                            ng-disabled="materialDetail.$invalid || isSaving">
+                        <span class="glyphicon glyphicon-floppy-disk"></span>
+                        Save Changes
+                    </button>
+
+                    <button type="button" class="btn btn-danger btn-block" ng-click="deleteMaterial()"
+                            ng-disabled="isSaving">
+                        <span class="glyphicon glyphicon-remove"></span> Delete Material
+                    </button>
+
+                    <button type="button" class="btn btn-danger btn-block" data-dismiss="modal" ng-disabled="isSaving">
+                        <span class="glyphicon glyphicon-off"></span> Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- machines -->
+    <a name="machines"></a>
+
+    <h2>Machines</h2>
+
+    <div id="machineList" class="tableContainer">
+
+        <div class="row text-right">
+            <button type="button" class="btn btn-success btn-lg" id="newOrder" ng-click="newMachine()"
+                    ng-disabled="disableMach">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Machine
+            </button>
+
+            <div class="alert alert-warning alert" role="alert" ng-show="disableMach">
+                Edit your factory details and add the materials first.
+            </div>
+        </div>
+
+        <table class="table table-hover table-striped materialsTable">
+            <thead>
+            <th class="col-md-2">Printer Name</th>
+            <th class="col-md-6">Description</th>
+            <th class="col-md-1">Print Technology</th>
+            <th class="col-md-2">Materials</th>
+            <th class="col-md-1">Image</th>
+            </thead>
+            <tbody>
+            <tr class="handOver" ng-repeat="machine in factoryInfo.machines"
+                ng-click="machineDetails(machine, $index)">
+                <td>{{machine.name}}</td>
+                <td>{{machine.description}}</td>
+                <td>{{machine.technology.display}} ({{machine.technology.code | uppercase}})</td>
+                <td>{{machine.materials | materialsArray}}</td>
+                <td>
+                    <img ng-src="{{machine.image | randomSrc}}" class="machineImg">
+                </td>
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="modal fade" id="machineDetailPU" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4><span class="glyphicon glyphicon-info"></span> Machine Info</h4>
+            </div>
+            <div class="modal-body" style="padding:40px 50px;">
+                <form role="form" id="mchineDetail" name="mchineDetail" novalidate>
+                    <h2 ng-if="!machEdit.new">{{machEdit.name}}</h2>
+
+                    <h2 ng-if="machEdit.new">New Printer</h2>
+
+                    <div class="form-group">
+                        <label for="materialName">Printer Name</label>
+
+
+                        <div class="col-sm-10" ng-if="!machEdit.new">
+                            <p class="form-control-static">{{machEdit.name}}</p>
+                        </div>
+
+
+                        <input type="text" class="form-control" id="machineName" name="machineName"
+                               ng-model="machEdit.name" required ng-if="machEdit.new">
+
+                        <div class="alert alert-danger" role="alert"
+                             ng-show="mchineDetail.machineName.$invalid && !mchineDetail.machineName.$pristine">
+                            <strong>Error!</strong>
+                            <span> Printer name is required.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="materialDescription">Printer Description</label>
+
+                        <textarea ng-model="machEdit.description" id="materialDescription" class="form-control"
+                                  rows="3"></textarea>
+                        <small class="text-muted">This is the description of the printer.
+                            <i> *optional</i>
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="factoryDescription">Printer Technology</label>
+                        <select class="form-control" ng-model="machEdit.technology" name="technology"
+                                ng-options="type.display for type in printerType" required>
+                        </select>
+                        <small class="text-muted">What technology the printer uses.</small>
+                        <div class="alert alert-danger" role="alert"
+                             ng-show="mchineDetail.technology.$invalid && !mchineDetail.technology.$pristine">
+                            <strong>Error!</strong>
+                            <span> Please select printer technology.</span>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="factoryDescription">Compatible Materials</label>
+
+                        <div class="row form-inline">
+                            <div class="checkbox" ng-repeat="material in factoryInfo.materials">
+                                <label>
+                                    <input type="checkbox" value="" checklist-model="machEdit.materials"
+                                           checklist-value="material.name">
+                                    {{material.name}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="matImage">Schedule recurring events.</label>
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <td>
+                                Type of event
+                            </td>
+                            <td>
+                                Scheduled day
+                            </td>
+                            <td>
+                                Start time
+                            </td>
+                            <td>
+                                Duration
+                            </td>
+                            <td>
+                                Title
+                            </td>
+                            <td>
+                                Actions
+                            </td>
+                            </thead>
+                            <tr>
+                                <td><!-- type of event -->
+                                    <select class="form-control" ng-model="recurring.type">
+                                        <option value="1">Daily</option>
+                                        <option value="2">Weekly</option>
+                                        <option value="3">Monthly</option>
+                                    </select>
+                                </td>
+                                <!-- select day if needed -->
+
+                                <td ng-if="recurring.type==1">
+                                    Everyday
+                                </td>
+
+                                <td ng-if="recurring.type==2">
+                                    <select class="form-control" ng-model="recurring.dayOfWeek">
+                                        <option value="1">Monday</option>
+                                        <option value="2">Tuesday</option>
+                                        <option value="3">Wednesday</option>
+                                        <option value="4">Thursday</option>
+                                        <option value="5">Friday</option>
+                                        <option value="6">Saturday</option>
+                                        <option value="0">Sunday</option>
+                                    </select>
+                                </td>
+
+                                <td ng-if="recurring.type==3">
+                                    <select class="form-control" ng-model="recurring.dayOfMonth">
+                                        <option ng-repeat="day in daysOfMonth" value="{{day}}">{{day}}</option>
+                                    </select>
+                                </td>
+
+                                <!-- start time -->
+                                <td>
+                                    <input class="form-control" type="text" ng-model="recurring.startTime">
+                                </td>
+
+                                <td>
+                                    <input class="form-control" type="text" ng-model="recurring.duration">
+                                </td>
+                                <td>
+                                    <input class="form-control" type="text" ng-model="recurring.title">
+                                </td>
+
+                                <td>
+                                    <button type="button" class="btn btn-success" ng-click="addRecurringEvent()">Add
+                                        Event
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <tr ng-repeat="event in recurringEvents">
+                                <td>{{event.idReccurenceType | recurringType}}</td>
+                                <td ng-if="event.idReccurenceType==1">Daily</td>
+                                <td ng-if="event.idReccurenceType==2">{{event.dayOfWeek}}</td>
+                                <td ng-if="event.idReccurenceType==3">{{event.dayOfMonth}}</td>
+                                <td>{{event.startHours}}</td>
+                                <td>{{event.endHours-event.startHours}}</td>
+                                <td>{{event.title}}</td>
+                                <td>
+                                    <a href="" ng-click="deleteEvent($index)" class="crud delete">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </a>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+
+                    <div class=" form-group
+                        ">
+                        <label for="matImage">Upload an image of the printer.</label>
+
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-primary btn-file">
+                                    Browse
+                                    <input type="file" ngf-select ng-model="machImage" id="machImage" name="machImage"
+                                           accept=".jpg, .png" ngf-max-size="1MB" ngf-model-invalid="errorFiles">
+                                </span>
+                            </span>
+                            <input class="form-control" readonly="" type="text" id="machImageSelect"
+                                   ng-model="matEdit.image">
+                        </div>
+                        <div class="alert alert-danger" role="alert"
+                             ng-show="mchineDetail.machImage.$error.maxSize">
+                            <strong>Error!</strong>
+                            <span> File too large {{errorFiles[0].size / (1024*1024)|number:1}}MB: max 1MB.</span>
+                        </div>
+                    </div>
+
+
+                    <button type="button" class="btn btn-success btn-block" ng-click="submitMachine(machImage)"
+                            ng-disabled="mchineDetail.$invalid || isSaving">
+                        <span class="glyphicon glyphicon-floppy-disk"></span>
+                        Save Changes
+                    </button>
+                    <button type="button" class="btn btn-danger btn-block" ng-click="deleteMachine()"
+                            ng-disabled="isSaving">
+                        <span class="glyphicon glyphicon-remove"></span> Delete Machine
+                    </button>
+
+                    <button type="button" class="btn btn-danger btn-block" data-dismiss="modal" ng-disabled="isSaving">
+                        <span class="glyphicon glyphicon-off"></span> Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<% include template/footer.ejs %>
+</body>
+</html>

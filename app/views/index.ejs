@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible"
+          content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Hefast - FABulous</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/font-awesome.min.css"/>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,600,700' rel='stylesheet'
+          type='text/css'>
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/register.css" rel="stylesheet">
+</head>
+
+
+<body id="indexBody" ng-app="indexApp">
+<% if (typeof message != 'undefined' && message.length > 0) { %>
+<p><%= message %></p>
+<% } %>
+<div class="brochureDl">
+    <p>
+        <a href="pdf/hefast.pdf" target="_blank" class="btn btn-primary dlBtn">
+            <i class="fa fa-download"></i>
+            Brochure
+
+        </a>
+        <a href="pdf/hefast.pdf" target="_blank">
+            <img src="/img/hefast/brochure.jpg" alt="Hefast Brochure" id="hefBrochure"/>
+        </a>
+    </p>
+</div>
+
+<div class="container-fluid">
+    <div class="row pageHeader">
+        <img src="/img/hefast/FABulous_claim_web.png" alt="Fabulous Logo" class="img-responsive fabLogo">
+        <img src="/img/hefast/hefast.png" alt="Hefast Logo" class="img-responsive hefLogo">
+    </div>
+
+    <div class="row textContent">
+        <div class="col-md-8 textContent">
+            <h3>
+                Never miss a deadline again!
+            </h3>
+
+            <p>
+                &emsp;&emsp;3DP-OPECR (<span class="hef">Hefast</span>) is a cloud-based application which helps 3D
+                printer
+                hubs in better organizing their production activities, estimating and forecasting materials consumption
+                and
+                in improving the communication with their clients.
+            </p>
+
+            <p>
+                &emsp;&emsp;Due to the flexibility of the system, the hubs can be <b>small</b> (one person with a
+                printer at
+                home) or <b>big</b> (a prototyping or rapid manufacturing factory with several machines).
+                We very conservatively estimate the total accessible market to be 20.000 3D printers (growing fast!).
+            </p>
+
+            <p>
+                &emsp;&emsp;While there certainly is competition on the market, we took the best features and added new
+                ones
+                to create a more intuitive and easy to use application which innovates also by an additional layer of
+                <b>Big
+                    Data Analytics</b> and <b>Business Intelligence</b> and the usage of <b><i>FIWARE</i></b>
+                technologies.
+            </p>
+        </div>
+
+
+        <div class="col-md-3 pull-right">
+            <div class="loginForm">
+                <form name="loginForm" ng-controller="indexController" novalidate>
+                    <h4>Log in</h4>
+                 <!--   <div class="form-group"
+                         ng-class="{'has-error' : loginForm.username.$invalid && (loginForm.username.$touched || trySubmit),
+                         'has-success' : loginForm.username.$valid && loginForm.username.$touched}">
+
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user-md fa-lg"></i></span>
+                            <input type="text" class="form-control" placeholder="Username"
+                                   aria-describedby="sizing-addon1" ng-model="user.username"
+                                   name="username" required>
+                        </div>
+                        <div class="help-block text-center has-error" ng-messages="loginForm.username.$error"
+                             ng-show="loginForm.username.$touched || trySubmit">
+                            <p ng-message="required">The username is required.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group"
+                         ng-class="{'has-error' : loginForm.password.$invalid && (loginForm.password.$touched || trySubmit),
+                         'has-success' : loginForm.password.$valid && loginForm.password.$touched}">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-unlock fa-lg"></i></span>
+                            <input type="password" class="form-control" placeholder="Password"
+                                   aria-describedby="sizing-addon1" ng-model="user.password"
+                                   name="password" id="password" required>
+                        </div>
+                        <div class="help-block text-center has-error" ng-messages="loginForm.password.$error"
+                             ng-show="loginForm.password.$touched || trySubmit">
+                            <p ng-message="required">The password is required.</p>
+                        </div>
+                    </div>
+
+                    <div id="message">
+                        <p id="loginError"></p>
+                    </div>
+
+                    <button class="btn btn-success center-block" type="submit" ng-click="login()"
+                            ng-disabled="isSaving">Log in
+                    </button>-->
+
+                    <a href="/auth/fiware" class="btn btn-success center-block">
+                        Log in with FIWARE Account
+                    </a>
+
+                    <a href="/auth/facebook" class="btn btn-success center-block">
+                        Log in with FaceBook Account
+                    </a>
+
+                    <!--<a href="/register" class="btn btn-info center-block registerBtn">
+                        Register
+                    </a>-->
+
+                </form>
+                <div class="loginFooter">
+                    <!--<p class="forgotPass"><a href="/forgot">Forgot password?</a></p>-->
+
+                    <p class="contactUs">Need assistance?
+                        <a href="mailto:feedback@bluemind-software.ro?subject=Hefast Assistance">
+                            Contact us.
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/libs/angular.js"></script>
+<script src="/js/libs/angular-messages.min.js"></script>
+<script src="js/libs/forge-sha256.min.js"></script>
+<script src="/js/angular/index/index.js"></script>
+
+</body>
+</html>

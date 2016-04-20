@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include template/head.ejs %>
+
+    <% include template/jsdefaults.ejs %>
+    <script src="/js/angular/client/homePage/homePage.js"></script>
+</head>
+
+<body ng-app="clientHomePage">
+<% include template/nav.ejs %>
+<div class="container-fluid" ng-controller="clientHomePageController" ng-cloak>
+    <div class="jumbotron">
+        <h1>Wellcome, <%- user.fullName %></h1>
+
+    </div>
+    <div class="container">
+        <hr class="featurette-divider">
+
+        <div class="myFactory">
+            <h2 class="featurette-heading">{{userFactory.factoryName}}</h2>
+            <img alt="{{userFactory.factoryName}}" ng-src="{{userFactory.logo}}"
+                 data-holder-rendered="true" class="img-responsive">
+
+            <p class="lead">{{userFactory.description}}</p>
+
+            <a ng-href="/home/factory" class="btn btn-default">Go to my factory</a>
+            <a ng-href="/home/orders#newOrder" class="btn btn-success btn-lg">Place order with
+                factory</a>
+            <a ng-href="/home/orders" class="btn btn-default">Order history</a>
+        </div>
+        <hr class="featurette-divider">
+    </div>
+</div>
+
+<% include template/footer.ejs %>
+
+</body>
+</html>
