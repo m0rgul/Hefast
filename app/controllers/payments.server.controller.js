@@ -72,8 +72,6 @@ exports.getPaymentPlans = function (req, res) {
 };
 
 exports.cep = function (req, res) {
-    console.log('CEP said...');
-    console.log(req.body);
     res.end();
 
     /*var smtpTrans = nodemailer.createTransport(smtpTransport({
